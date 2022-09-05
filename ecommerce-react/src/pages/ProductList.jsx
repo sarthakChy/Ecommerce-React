@@ -5,17 +5,35 @@ import Navbar from '../components/Navbar'
 import NewsLetter from '../components/NewsLetter'
 import Products from '../components/Products'
 import styled from 'styled-components'
-
+import {useLocation} from 'react-router-dom'
+import { useState } from 'react'
+import { useEffect } from 'react'
 function ProductList() {
+    const location = useLocation();
+    const cat = location.pathname.split('/')[2]
+    const [filters,setFilters] = useState({});
+    const [sort,setSort] = useState('newest');
+
+    const handleFilter = (e)=>{
+        setFilters({
+            ...filters,
+            [e.target.name] : e.target.value
+        })
+    }
+
+    const handleSort = (e)=>{
+        setSort(e.target.value)
+    }
+
   return (
     <>
         <Navbar/>
         <Announcements/>
-        <Title>Dresses</Title>
+        <Title>{cat}</Title>
         <FilterContainer>
             <Filter>
                 <FilterText>Filter Products:</FilterText>
-                <Select>
+                <Select name='color' onChange={(e)=>handleFilter(e)}>
                     <Option disabled selected>Color</Option>
                     <Option>White</Option>
                     <Option>Black</Option>
@@ -24,7 +42,7 @@ function ProductList() {
                     <Option>Yellow</Option>
                     <Option>Green</Option>
                 </Select>
-                <Select>
+                <Select name='size'onChange={(e)=>handleFilter(e)}>
                     <Option disabled selected>Size</Option>
                     <Option>XS</Option>
                     <Option>S</Option>
@@ -36,14 +54,14 @@ function ProductList() {
             </Filter>
             <Filter>
                <FilterText>Sort Products:</FilterText> 
-               <Select>
-                    <Option selected>Newest</Option>
-                    <Option>Price (asc)</Option>
-                    <Option>Price (desc)</Option>
+               <Select name='sort' onChange={(e)=>handleSort(e)}>
+                    <Option value = 'newest' selected>Newest</Option>
+                    <Option value='asc'>Price (asc)</Option>
+                    <Option value='desc'>Price (desc)</Option>
                </Select>
             </Filter>
         </FilterContainer>
-        <Products/>
+        <Products cat={cat} filters={filters} sort={sort}/>
         <NewsLetter/>
         <Footer/>
     </>

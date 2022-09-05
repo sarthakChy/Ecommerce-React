@@ -1,19 +1,23 @@
 import { FavoriteBorder, SearchRounded, ShoppingCartOutlined } from '@material-ui/icons'
 import React from 'react'
+import { Link, useNavigate, useLinkClickHandler, } from 'react-router-dom'
 import styled from 'styled-components'
 
 function ProductItem({item}) {
+    const navigate = useNavigate()
+
+
   return (
     <>
         <Container>
             <Circle/>
-            <Image src={item.img}/>
+            <Image src={item?.img}/>
             <Info id='info'>
                 <Icon>
-                    <SearchRounded/>
-                </Icon>
-                <Icon>
                     <ShoppingCartOutlined/>
+                </Icon>  
+                <Icon onClick={()=> {navigate(`/product/${item._id}`)}}>
+                    <SearchRounded/>
                 </Icon>
                 <Icon>
                     <FavoriteBorder/>

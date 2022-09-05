@@ -1,15 +1,21 @@
 import React from 'react'
 import styled from 'styled-components'
+import axios from 'axios'
+import { useLocation, Link } from 'react-router-dom'
+import { useEffect } from 'react'
 
 function CategoryItems({item}) {
+    
   return (
     <>
         <Container>
-            <Image src={item.img}/>
-            <Info>
-                <Title>{item.title}</Title>
-                <Button>SHOW NOW!</Button>
-            </Info>
+            <Link to ={`products/${item.cat}`}>
+                <Image src={item.img}/>
+                <Info>
+                    <Title>{item.title}</Title>
+                    <Button>SHOW NOW!</Button>
+                </Info>
+            </Link>
         </Container>
     </>
   )

@@ -2,8 +2,11 @@ import React from 'react'
 import styled from 'styled-components'
 import {categories} from '../data'
 import CategoryItems from './CategoryItems'
+import axios from 'axios'
+import {useLocation} from 'react-router-dom'
 
 function Categories() {
+  
   return (
     <>
         <Container>

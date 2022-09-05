@@ -1,50 +1,88 @@
-import { Add, Remove } from '@material-ui/icons'
+import { Add, AddShoppingCart, Remove } from '@material-ui/icons'
+import axios from 'axios'
 import React from 'react'
+import { useState } from 'react'
+import { useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import Announcements from '../components/Announcements'
 import Footer from '../components/Footer'
 import Navbar from '../components/Navbar'
-import NewsLetter from '../components/NewsLetter'
+import {publicRequest} from '../Axios'
 
 function SingleProduct() {
+    
+    const navigate = useNavigate()
+    const location = useLocation()
+    const id = location.pathname.split('/')[2]
+
+    const [product, setProduct] = useState();
+    const [quantity, setQuantity] = useState(1);
+    const [color, setColor] = useState();
+    const [size, setSize] = useState();
+    const [cartProduct, setCartProduct] = useState();
+
+    const addCart = async ()=>{
+        try {
+            const res = await publicRequest.post('/cart',cartProduct)
+            console.log(res.data)
+        } catch (error) {
+            console.log(error)
+        }
+        
+    }
+
+    useEffect(()=>{
+        const getSingleProduct = async () =>{
+            try {
+                const res = await publicRequest.get(`/product/find/${id}`)
+                setProduct(res.data)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        getSingleProduct()
+    },[id])
+
+    useEffect(()=>{
+        setCartProduct({...product,color: color,size: size, quantity: quantity})
+    },[quantity,size,color,product])
+
   return (
     <>
         <Navbar/>
         <Announcements/>
         <Wrapper>
             <Left>
-                <Image src='https://i.ibb.co/S6qMxwr/jean.jpg'/>
+                <Image src={product?.img}/>
             </Left>
             <Right>
-                <ProductTitle>Denim Jumpsuit</ProductTitle>
-                <Desc>
-                Al contrario del pensamiento popular, el texto de Lorem Ipsum no es simplemente texto aleatorio. Tiene sus raices en una pieza cl´sica de la literatura del Latin, que data del año 45 antes de Cristo, haciendo que este adquiera mas de 2000 años de antiguedad. Richard McClintock, un profesor de Latin de la Universidad de Hampden-Sydney en Virginia, encontró una de las palabras más oscuras de la lengua del latín, "consecteur", en un pasaje de Lorem Ipsum, 
-                </Desc>
-                <Price>$20</Price>
+                <ProductTitle>{product?.title}</ProductTitle>
+                <Desc>{product?.desc}</Desc>
+                <Price>$ {product?.price}</Price>
                 <Detailes>
                     <Filter>
                         <FilterText>Color</FilterText>
-                        <FilterColor color='black'></FilterColor>
-                        <FilterColor color='lightgrey'></FilterColor>
-                        <FilterColor color='blue'></FilterColor>
+                        {product?.color.map((c)=>(
+                            <FilterColor color={c} key={c} onClick={()=>setColor(c)}></FilterColor>
+                        ))}
                     </Filter>
-                    <Select>
+                    <Select onChange={(e)=>setSize(e.target.value)}>
                         <Option disabled selected>Size</Option>
-                        <Option>XS</Option>
-                        <Option>S</Option>
-                        <Option>M</Option>
-                        <Option>L</Option>
-                        <Option>XL</Option>
-                        <Option>XXL</Option>
+                        {product?.size.map((s)=>(
+                           <Option key={s}>{s}</Option>
+                        ))}
+                        
                     </Select>
                 </Detailes>
                 <AddContainer>
                     <AmountContainer>
-                        <Remove style={{cursor:'pointer'}}/>
-                        <Amount>1</Amount>
-                        <Add  style={{cursor:'pointer'}}/>
+                        <Remove style={{cursor:'pointer'}} onClick={()=> quantity>1 && setQuantity((prev)=> prev-1)}/>
+                        <Amount>{quantity}</Amount>
+                        <Add  style={{cursor:'pointer'}} onClick={()=> setQuantity((prev)=> prev+1)}/>
                     </AmountContainer>
-                    <AddButton>Add To Cart</AddButton>
+                    <AddButton onClick={()=> addCart()}>Add To Cart</AddButton>
                 </AddContainer>
             </Right>
         </Wrapper>
