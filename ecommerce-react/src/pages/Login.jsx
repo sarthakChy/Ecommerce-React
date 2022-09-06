@@ -1,15 +1,41 @@
 import React from 'react'
-import styled from 'styled-components'
+import { useState } from 'react';
+import styled from 'styled-components';
+import {publicRequest} from '../Axios';
+import {useDispatch, useSelector} from 'react-redux'
+import {loginFailure,loginStart, loginSuccess} from '../redux/userRedux'
+
+
 function Login() {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const {isFetching, error} = useSelector((state)=> state.user)
+    const dispatch = useDispatch();
+
+    const login = async (e)=>{
+        e.preventDefault();
+        dispatch(loginStart())
+        try {
+            const res = await publicRequest.post('/auth/login',{
+                username,
+                password
+            })
+            console.log(res.data)     
+            dispatch(loginSuccess(res.data))   
+        } catch (error) {
+            dispatch(loginFailure())
+        }
+    }
   return (
     <>
         <WrapContainer>
             <Wrapper>
                 <Title>SIGN IN</Title>
                 <Form>
-                    <Input placeholder='Userame'/>
-                    <Input placeholder='Password'/>
-                    <Button>LOGIN</Button>
+                    <Input placeholder='Userame' onChange={(e)=> setUsername(e.target.value)}/>
+                    <Input type="password" placeholder='Password' onChange={(e)=> setPassword(e.target.value)}/>
+                    <Button onClick={(e)=> login(e)} disabled={isFetching}>LOGIN</Button>
+                    {error && <Error>Wrong Credentials!</Error>}
                     <Links>DO NOT REMEMBER YOUR PASSWORD?</Links>
                     <Links>CREATE A NEW ACCOUNT</Links>
                 </Form>
@@ -66,6 +92,10 @@ const Button = styled.button`
     letter-spacing:3px ;
     background-color:teal;
     border:none;
+    &:disabled{
+        color: teal;
+        cursor: not-allowed;
+    }
 `
 const Links = styled.a`
     font-size:14px;
@@ -74,4 +104,8 @@ const Links = styled.a`
     margin-top:20px;
     text-decoration:underline ;
 
+`
+const Error = styled.span`
+    color:red ;
+    margin-top:10px ;
 `

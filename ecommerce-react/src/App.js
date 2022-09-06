@@ -5,11 +5,12 @@ import ProductList from './pages/ProductList.jsx';
 import Register from './pages/Register.jsx';
 import SingleProduct from './pages/SingleProduct.jsx';
 import {BrowserRouter, Route, Navigate, Routes} from 'react-router-dom'
+import { useSelector } from 'react-redux';
 
 function App() {
 
-  const user = true;
-
+  const user = useSelector((state)=> state.user.currentUser);
+  console.log(user)
   return (
     <BrowserRouter>
         <Routes>
