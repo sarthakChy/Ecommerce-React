@@ -4,8 +4,24 @@ import { Add, Remove } from '@material-ui/icons'
 import Announcements from '../components/Announcements'
 import Footer from '../components/Footer'
 import Navbar from '../components/Navbar'
+import { useEffect } from 'react'
+import {publicRequest} from '../Axios'
 
 function Cart() {
+
+  // useEffect(()=>{
+  //   const getCart = async ()=>{
+  //     try {
+  //       const res = await publicRequest.get('/cart/find/')
+  //       console.log(res)
+  //     } catch (error) {
+  //       console.log(error)
+  //     }
+  //   }
+
+  //   getCart()
+  // },[])
+
   return (
     <>
       <Navbar/>

@@ -9,12 +9,18 @@ import Announcements from '../components/Announcements'
 import Footer from '../components/Footer'
 import Navbar from '../components/Navbar'
 import {publicRequest} from '../Axios'
+import {useDispatch, useSelector} from 'react-redux'
+import { addProduct } from '../redux/cartRedux'
+
 
 function SingleProduct() {
     
     const navigate = useNavigate()
     const location = useLocation()
     const id = location.pathname.split('/')[2]
+    const cart = useSelector((state) => state.cart)
+    console.log(cart)
+    const dispatch = useDispatch();
 
     const [product, setProduct] = useState();
     const [quantity, setQuantity] = useState(1);
@@ -22,13 +28,8 @@ function SingleProduct() {
     const [size, setSize] = useState();
     const [cartProduct, setCartProduct] = useState();
 
-    const addCart = async ()=>{
-        try {
-            const res = await publicRequest.post('/cart',cartProduct)
-            console.log(res.data)
-        } catch (error) {
-            console.log(error)
-        }
+    const handleClick = async ()=>{
+        dispatch(addProduct({...product,color,size,quantity}))
         
     }
 
@@ -44,10 +45,6 @@ function SingleProduct() {
 
         getSingleProduct()
     },[id])
-
-    useEffect(()=>{
-        setCartProduct({...product,color: color,size: size, quantity: quantity})
-    },[quantity,size,color,product])
 
   return (
     <>
@@ -82,7 +79,7 @@ function SingleProduct() {
                         <Amount>{quantity}</Amount>
                         <Add  style={{cursor:'pointer'}} onClick={()=> setQuantity((prev)=> prev+1)}/>
                     </AmountContainer>
-                    <AddButton onClick={()=> addCart()}>Add To Cart</AddButton>
+                    <AddButton onClick={()=> handleClick()}>Add To Cart</AddButton>
                 </AddContainer>
             </Right>
         </Wrapper>
