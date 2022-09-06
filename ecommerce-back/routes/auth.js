@@ -6,17 +6,25 @@ const jwt = require("jsonwebtoken");
 //REGISTER
 router.post("/register", async(req, res) => {
 
-  const newUser = await User.create({
-    username: req.body.username,
-    email: req.body.email,
-    password: CryptoJS.AES.encrypt(req.body.password.toString(), process.env.PASS_SEC).toString(),
-  
-  });
-
   try {
+    
+    const newUser = await User.create({
+          username: req.body.username,
+          email: req.body.email,
+          password: CryptoJS.AES.encrypt(req.body.password.toString(), process.env.PASS_SEC).toString(),
+          
+        });
+
     res.status(201).json(newUser);
+
   } catch (err) {
-    res.status(500).json(err);
+        let errMsg;
+        if (err.code == 11000) {
+          errMsg = Object.keys(err.keyValue)[0] + " already exists.";
+        } else {
+          errMsg = Object.keys(err.errors)[0] + " is Required.";
+        }
+        res.status(400).json({ statusText: "Bad Request", message: errMsg })
   }
 });
 

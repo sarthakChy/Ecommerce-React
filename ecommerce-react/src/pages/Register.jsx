@@ -1,17 +1,45 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import {publicRequest} from '../Axios'
+import {useNavigate} from 'react-router-dom'
 
 function Register() {
 
+    const navigate = useNavigate()
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState();
+    const [email, setEmail] = useState('');
+    const [confirmPass, setConfirmPass] = useState('');
+    const [error, setError] = useState('')
+    const [message, setMessage] = useState('')
 
-    const register = async ()=>{
-        try {
-            const res = await publicRequest.post('/register',{})
-            console.log(res.data)
-
+    const register = async (e)=>{
+        e.preventDefault()
+        try {    
+            
+            if(confirmPass!==password){
+                setError('Password Do Not Match')
+                setTimeout(()=>{
+                    setError('')
+                },2000)
+            }else{
+                const res = await publicRequest.post('/auth/register',{
+                    username,
+                    email,
+                    password
+                })
+                console.log(res.data)
+                setMessage('User Registered')
+                setTimeout(()=>{
+                        navigate('/login')
+                },2000)
+            }    
+            
         } catch (error) {
-            console.log(error)
+            setError(error.response.data.message)
+                    setTimeout(()=>{
+                        setError('')
+                    },2000)
         }
     }
   return (
@@ -22,14 +50,15 @@ function Register() {
                 <Form>
                     <Input placeholder='First Name'/>
                     <Input placeholder='Last Name'/>
-                    <Input placeholder='Userame'/>
-                    <Input placeholder='Email'/>
-                    <Input placeholder='Password'/>
-                    <Input placeholder='Confirm Password'/>  
+                    <Input placeholder='Userame'onChange={(e)=> setUsername(e.target.value)}/>
+                    <Input type='email' placeholder='Email'onChange={(e)=> setEmail(e.target.value)}/>
+                    <Input type='password' placeholder='Password'onChange={(e)=> setPassword(e.target.value)}/>
+                    <Input type='password' placeholder='Confirm Password'onChange={(e)=> setConfirmPass(e.target.value)}/>
+                    <Error color={error? 'red' : 'teal'}>{error? error : message}</Error>  
                     <Policy>
                         By creating an account, I consent to the processing of my personal data in accordance with the <b>Privacy Policy</b>
                     </Policy>
-                    <Button onClick={()=> register()}>CREATE</Button>
+                    <Button onClick={(e)=> register(e)}>CREATE</Button>
                 </Form>
             </Wrapper>
         </WrapContainer>
@@ -86,4 +115,9 @@ const Policy = styled.span`
     font-size:14px;
     font-weight:300 ;
     margin-top:20px;
+`
+const Error = styled.div`
+    color:${(props)=>props.color} ;
+    margin-top:10px ;
+    font-weight:500 ;
 `
