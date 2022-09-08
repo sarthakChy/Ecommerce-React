@@ -14,7 +14,7 @@ function App() {
   return (
     <BrowserRouter>
         <Routes>
-          <Route exact path = '/' element={<Home/>}/>
+          <Route exact path = '/' element={user? <Home/> : <Navigate  to='login'/>}/>
           <Route exact path = '/product/:id' element={<SingleProduct/>}/>
           <Route exact path = '/products/:categories' element={<ProductList/>}/>
           <Route exact path = '/cart' element={<Cart/>}/>
