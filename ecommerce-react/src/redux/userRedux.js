@@ -3,7 +3,7 @@ import {createSlice} from '@reduxjs/toolkit'
 const initialState = {
     currentUser: null,
     isFetching: false,
-    error: false,
+    error: null,
 }
 
 export const userSlice = createSlice({
@@ -19,8 +19,8 @@ export const userSlice = createSlice({
             state.error = false
 
         },
-        loginFailure: (state)=>{
-            state.error = true
+        loginFailure: (state,action)=>{
+            state.error = action.payload
             state.isFetching = false
         }
     },

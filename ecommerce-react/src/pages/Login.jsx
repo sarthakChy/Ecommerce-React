@@ -14,7 +14,7 @@ function Login() {
 
     const login = async (e)=>{
         e.preventDefault();
-        dispatch(loginStart())
+        // dispatch(loginStart())
         try {
             const res = await publicRequest.post('/auth/login',{
                 username,
@@ -23,7 +23,7 @@ function Login() {
             console.log(res.data)     
             dispatch(loginSuccess(res.data))   
         } catch (error) {
-            dispatch(loginFailure())
+            dispatch(loginFailure(error.response.data.message))
         }
     }
   return (
@@ -35,7 +35,7 @@ function Login() {
                     <Input placeholder='Userame' onChange={(e)=> setUsername(e.target.value)}/>
                     <Input type="password" placeholder='Password' onChange={(e)=> setPassword(e.target.value)}/>
                     <Button onClick={(e)=> login(e)} disabled={isFetching}>LOGIN</Button>
-                    {error && <Error>Wrong Credentials!</Error>}
+                    {error && <Error>{error}</Error>}
                     <Links>DO NOT REMEMBER YOUR PASSWORD?</Links>
                     <Links>CREATE A NEW ACCOUNT</Links>
                 </Form>

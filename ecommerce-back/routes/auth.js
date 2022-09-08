@@ -40,7 +40,7 @@ router.post('/login', async(req,res)=>{
     if(user){
 
       if(originalPass !== req.body.password){
-        res.status(401).json("Wrong Credential!");
+        res.status(401).json({ statusText: "Bad Request", message: 'Wrong Credentials' });
       }else{
         const accessToken = jwt.sign({id: user._id, isAdmin: user.isAdmin}, process.env.jwt, {expiresIn: '3d'})
         const {password, ...others} = user._doc;
@@ -50,7 +50,7 @@ router.post('/login', async(req,res)=>{
     }
 
   } catch (error) {
-    res.status(401).json('Wrong Credentials!')
+    res.status(400).json({ statusText: "Bad Request", message: 'User does not Exist' })
   }
   
 
